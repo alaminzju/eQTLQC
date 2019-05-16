@@ -1,7 +1,12 @@
 # readme
 A Tool.config file is necessary to run this tool!
 
-This tool is mostly wrote in R3.5 and Python3.7, please make sure it can run on your enviroment
+This tool is mostly wrote in R3.5 and Python3.7, please make sure it can run on your enviroment.
+
+Before analysis, you can run a script to install dependence by running:
+```
+Rscript dependence.R
+```
 
 The Tool.config file is actually a *json* with **one** object “config", which include two object "transcriptome" and "genotyping". In both transcriptome and genotyping, the first key is **"usage"** which represent if this part is used or not. For example, if the usage in transcriptome is "FALSE" and in genotyping is "TRUE" then the tool will only run the genotyping part, all parameter in transcriptome is ignored.
 
@@ -9,13 +14,13 @@ The details of each parameters are listed below.
 ## transcriptome
 
 ### create TPM
-If usage in transcriptome is TRUE, then you need to select input data type including **fastq, bam, readcounts and TPM matrix** by assigning the corresponding values. Note that if the input is a readcounts file, a gene length file is also needed.
+If **usage** in transcriptome is TRUE *(or true, T, t)*, you need to select input data type including **fastq, bam, readcounts and TPM matrix** by assigning the corresponding values. Note that if the input is a readcounts file, a gene length file is also needed.
 
 If input files is fastq or bam, one(or two if fastq is paried-end)file(s) only represent one individual, so you have to put all files in one directory and sent the directory to the parameter.
 
 *e.g. "fastq":"/home/Document/experiment/" means all fastq files are in this directory. So does the "bam"*
 
-After determind fastq or bam, the tool will count TPM(Transcripts per million reads) with **RSEM** tool, you may need to install it first and confirm the value of each key in object "RSRM", the details of them are listed:
+After determind fastq or bam, the tool will count TPM(Transcripts per million reads) with <a href="https://github.com/deweylab/RSEM" target="_blank">**RSEM**</a> tool, you may need to install it first and confirm the value of each key in object "RSRM", the details of them are listed:
 
 | parameter for RSEM| necessity(Y/N)|  remark  |
 | --------   | -----:  | :----:    |
@@ -79,11 +84,13 @@ When "usage":"TRUE", the genotyping part is functional. The tools is use plink t
 |F_outlier_n_sd|Y|determind F outlier with fmean $\pm$F_outlier_n_sd\*fsd|
 |population|N|Population stratification| 
 
+#### PCA
 | parameter for smartpca| remark  |
 | ------ | :----:  |
 |m|default(5)maximum number of outlier removal iterations.To turn off outlier removal, set -m 0.|
 |k|default(10)number of principal components to output|
 |t|default(10)number of principal components along which to remove outliers during each outlier removal iteration|
-|delete pca outlier(s)|TRUE or FALSE|
-|output top n component|output top n component from PCA result|
+
+#### Imputation
+If the usage of Imputation is TRUE, the tool will use <a href="https://www.well.ox.ac.uk/~wrayner/tools/" target="_blank">**McCarthy's tool**</a>McCarthy's tool to do prepreparing checking. The tool can use three kinds of reference panel: HRC, 1000G and CAAPA, use the parameter in config file to seletc and determind the reference panel.
 
