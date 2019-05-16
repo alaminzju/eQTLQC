@@ -1,4 +1,4 @@
-#readme
+# readme
 A Tool.config file is necessary to run this tool!
 
 This tool is mostly wrote in R3.5 and Python3.7, please make sure it can run on your enviroment
@@ -6,9 +6,9 @@ This tool is mostly wrote in R3.5 and Python3.7, please make sure it can run on 
 The Tool.config file is actually a *json* with **one** object “config", which include two object "transcriptome" and "genotyping". In both transcriptome and genotyping, the first key is **"usage"** which represent if this part is used or not. For example, if the usage in transcriptome is "FALSE" and in genotyping is "TRUE" then the tool will only run the genotyping part, all parameter in transcriptome is ignored.
 
 The details of each parameters are listed below.
-##transcriptome
+## transcriptome
 
-###create TPM
+### create TPM
 If usage in transcriptome is TRUE, then you need to select input data type including **fastq, bam, readcounts and TPM matrix** by assigning the corresponding values. Note that if the input is a readcounts file, a gene length file is also needed.
 
 If input files is fastq or bam, one(or two if fastq is paried-end)file(s) only represent one individual, so you have to put all files in one directory and sent the directory to the parameter.
@@ -35,21 +35,21 @@ If input is readcount and gene length file, the tool will call readcounts2TPM.R 
 
 If input is a TPM matrix, or we have already create it from other format, we can do the next step.
 
-###transcriptomeQC
+### transcriptomeQC
 All the following process is base on a TPM file.
 In this part, we will do quality control and some normalizatation work base on TPM data.
 
-####Three statistics to identify outliers
+#### Three statistics to identify outliers
 
-#####RLE
+##### RLE
 
 RLE(Relative Log Expression)is assume that most expressions in a sample should be near a mean value, only a few genes have differential expression, which means higher or lower than other genes. To calculate it, for each gene *i* , calculate it median in *N* sample as *Medi* , for each sample *j* , and expression value *eij*, count the difference between *eij* and *Medi* : *deij = eij-Medi* , than boxplot each sample base on *deij* and sort by IQR(interquartile range), the sample with lager IQR is more likely to be an outlier. 
 
-#####Hierarchical clustering
+##### Hierarchical clustering
 
 We use(1 - spearman's correlation) as distances between samples and assume samples should be homogeneous, so all samples should have short distances between others and clustered homogeneously. So samples far away others may be outliers. So we first use distances which is 1-spearmen correlation to hierarchically clustered, than use top 100 gene sort by variance to calculate Mahalanobis Distance, then a chi2 p-value will be calculated based on mahalanobis distance. Then clusters with $ \geq 60\%$ samples with Bonferroni-corrected p-values < 0.05 were marked as outliers.
 
-#####D-statistic
+##### D-statistic
 
 For each sample, D-statistic represent the average correlation between its expression and other samples. A sample with lower D-statistic is more likely to be an outlier.
 
@@ -64,7 +64,7 @@ After this three steps, we will do quantile normalization, if users have provide
 |coveriance|Y|TRUE or FALSE|
 |coveriance_file|N|coveriance information file, necessary when coveriance is TRUE|
 
-##genotyping
+## genotyping
 
 When "usage":"TRUE", the genotyping part is functional. The tools is use plink to process genotype data, if your data is in VCF fromat you can also use plink to change it into plink format. However, only plink 1.9+ can change VCF to plink so make sure you have install plink1.9+ or you may have to change VCF to plink yourself. The tool also use *smartpca* to run PCA analysis, please install it first.
 | parameter        | necessity(Y/N)   |  remark  |
