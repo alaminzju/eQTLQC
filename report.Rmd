@@ -200,10 +200,23 @@ if(appendInfo && is.element("sex",colnames(ROSMAP_clinical_HC))){
 
 ```{r if no appendInfo, echo=FALSE, warning=FALSE, results='hide', message=FALSE}
 if(!appendInfo){
-  print("with no append information, the pipeline is ended")
-  outliersIndex <- which(colnames(ROSMAP_tpm %in% outliersList))
-  ROSMAP_tpm <- ROSMAP_tpm[,-outliersIndex]
-  write.table(format(ROSMAP_tpm, digits=4,nsmall=4), file = "expression.postSVA.xls", sep="\t", col.names = NA, quote=F,row.names = TRUE)
+  print("with no coveriance information, the pipeline is ended")
+  outliersIndex <- which(colnames(ROSMAP_tpm) %in% outliersList)
+  if(length(outliersList)!=0)
+  {
+    ROSMAP_tpm <- ROSMAP_tpm[,-outliersIndex]
+  }
+  keep_genes_idx <- (rowSums(ROSMAP_tpm>0.1)>=10) 
+  expr= ROSMAP_tpm[keep_genes_idx,]
+  expr=log10(expr+1e-4)  # so row value of 0 will be -4 in the transformed value
+  # outlier correction: quantile normalization with order preserved. Now TPM is changed to rank normalized gene expression.
+  m=apply(expr, 1, mean); 
+  sd=apply(expr, 1, sd)
+  expr = t(apply(expr, 1, rank, ties.method = "average"));
+  #expr = qnorm(expr / (ncol(expr)+1));  # to standard normalization
+  expr = qnorm(expr / (ncol(expr)+1), mean=m, sd=sd)  # or, to preserve the mean and sd of each gene
+  rm(m,sd)
+  write.table(format(expr, digits=4,nsmall=4), file = "expression.normalization.xls", sep="\t", col.names = NA, quote=F,row.names = TRUE)
   
 }
 
