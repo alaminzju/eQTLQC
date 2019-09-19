@@ -11,9 +11,9 @@ Rscript dependence.R
 The Tool.config file is actually a *json* with **one** object “config", which include two object "transcriptome" and "genotyping". In both transcriptome and genotyping, the first key is **"usage"** which represent if this part is used or not. For example, if the usage in transcriptome is "FALSE" and in genotyping is "TRUE" then the tool will only run the genotyping part, all parameter in transcriptome is ignored.
 
 The details of each parameters are listed below.
-## transcriptome
+## Transcriptome
 
-### create TPM
+### Create TPM
 If **usage** in transcriptome is TRUE *(or true, T, t)*, you need to select input data type including **fastq, bam, readcounts and TPM matrix** by assigning the corresponding values. Note that if the input is a readcounts file, a gene length file is also needed.
 
 If input files is fastq or bam, one(or two if fastq is paried-end)file(s) only represent one individual, so you have to put all files in one directory and sent the directory to the parameter.
