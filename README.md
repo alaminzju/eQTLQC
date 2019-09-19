@@ -69,7 +69,7 @@ After this three steps, we will do quantile normalization, if users have provide
 |coveriance|Y|TRUE or FALSE|
 |coveriance_file|N|coveriance information file, necessary when coveriance is TRUE|
 
-## genotyping
+## Genotyping
 
 When "usage":"TRUE", the genotyping part is functional. The tools is use plink to process genotype data, if your data is in VCF fromat you can also use plink to change it into plink format. However, only plink 1.9+ can change VCF to plink so make sure you have install plink1.9+ or you may have to change VCF to plink yourself. The tool also use *smartpca* to run PCA analysis, please install it first.
 
