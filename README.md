@@ -1,22 +1,24 @@
+
 # readme
 A Tool.config file is necessary to run this tool!
 
 This tool is mostly wrote in R3.5 and Python3.7, please make sure it can run on your enviroment.
 
-Before analysis, you can run a script to install dependence by running:
+Before use this QC tool, run a script to install dependence by running:
 ```
 Rscript dependence.R
 ```
 
-The Tool.config file is actually a *json* with **one** object “config", which include two object "transcriptome" and "genotyping". In both transcriptome and genotyping, the first key is **"usage"** which represent if this part is used or not. For example, if the usage in transcriptome is "FALSE" and in genotyping is "TRUE" then the tool will only run the genotyping part, all parameter in transcriptome is ignored.
+
+The Tool.config file is actually a *json* with one object “config", which include two object "transcriptome" and "genotyping". In both transcriptome and genotyping, the first key is **"usage"** which represent if this part is used or not. For example, if the usage in transcriptome is "FALSE" and in genotyping is "TRUE" then the tool will only run the genotyping part, all parameter in transcriptome is ignored.
 
 The details of each parameters are listed below.
 ## Transcriptome
 
 ### Create TPM
-If **usage** in transcriptome is TRUE *(or true, T, t)*, you need to select input data type including **fastq, bam, readcounts and TPM matrix** by assigning the corresponding values. Note that if the input is a readcounts file, a gene length file is also needed.
+If **usage** in transcriptome is TRUE *(or true, T, t)*, you need to select input data type including **fastq, bam, readcounts and TPM(FPKM/RPKM) matrix** by assigning the corresponding values. Note that if the input is a readcounts file, a gene length file is also needed.
 
-If input files is fastq or bam, one(or two if fastq is paried-end)file(s) only represent one individual, so you have to put all files in one directory and sent the directory to the parameter.
+If input files are fastq or bam, one(or two if fastq is paried-end)file(s) only represent one individual, you have to put all files in one directory and set the parameter *fastq* or  *bam* in the config file as the directory.
 
 *e.g. "fastq":"/home/Document/experiment/" means all fastq files are in this directory. So does the "bam"*
 
@@ -41,24 +43,25 @@ If input is readcount and gene length file, the tool will call readcounts2TPM.R 
 If input is a TPM matrix, or we have already create it from other format, we can do the next step.
 
 ### transcriptomeQC
-All the following process is base on a TPM file.
+The following process is base on a TPM file.
 In this part, we will do quality control and some normalizatation work base on TPM data.
 
 #### Three statistics to identify outliers
 
 ##### RLE
 
-RLE(Relative Log Expression)is assume that most expressions in a sample should be near a mean value, only a few genes have differential expression, which means higher or lower than other genes. To calculate it, for each gene *i* , calculate it median in *N* sample as *Medi* , for each sample *j* , and expression value *eij*, count the difference between *eij* and *Medi* : *deij = eij-Medi* , than boxplot each sample base on *deij* and sort by IQR(interquartile range), the sample with lager IQR is more likely to be an outlier. 
+The RLE (Relative Log Expression) analysis is based on the hypothesis that in a sample, the expression of most genes should be at similar level, and only a small portion of genes show very high or low expression levels. Suppose the gene expression matrix *G* with genes on the rows and samples on the columns, RLE analysis ﬁrst calculate the median expression value across samples for every gene. Then eachexpression valueinthe matrix issubtractedbythe median expression value of the corresponding gene. For each sample (column), the distribution of residuals of expression values should be centered close to zero, and has small variations. The RLE plot aligns the expression distributions of all samples, in the form of boxplots, side by side in increasing order of the interquartile range (IQR). The samples locate at the right most side are more likely to be outliers
+
 
 ##### Hierarchical clustering
 
-We use(1 - spearman's correlation) as distances between samples and assume samples should be homogeneous, so all samples should have short distances between others and clustered homogeneously. So samples far away others may be outliers. So we first use distances which is 1-spearmen correlation to hierarchically clustered, than use top 100 gene sort by variance to calculate Mahalanobis Distance, then a chi2 p-value will be calculated based on mahalanobis distance. Then clusters with $ \geq 60\%$ samples with Bonferroni-corrected p-values < 0.05 were marked as outliers.
+We use(1 - spearman's correlation) as distances between samples and assume samples should be homogeneous, so all samples should have short distances between others and clustered homogeneously. So samples far away others may be outliers. So we first use distances which is 1-spearmen correlation to hierarchically clustered, than use top 100 gene sort by variance to calculate Mahalanobis Distance, then a chi2 p-value will be calculated based on mahalanobis distance. Then clusters with $\geq 60\%$ samples with Bonferroni-corrected p-values < 0.05 were marked as outliers.
 
 ##### D-statistic
 
-For each sample, D-statistic represent the average correlation between its expression and other samples. A sample with lower D-statistic is more likely to be an outlier.
+The D-statistic of each sample is the median Spearman’s correlations with other samples, which reﬂects the distance to other samples. And the outlier is far from the peak of D-statistics distribution
 
-After this three steps, we will do quantile normalization, if users have provided coveriance information, we can do gender test if have sex information; do combat to remove batch effect if have batch information. Then use sva to adjust other and hidden coveriance.
+After this three steps, we will do quantile normalization, if users have provided coveriance information, we can do gender test with sex information. We adopt combat function implemented in in SVA package to adjust the batch effects and the fsva function also in SVA package to adjust other known covariants and latent covariants.
 
 | parameter        | necessity(Y/N)   |  remark  |
 | --------   | -----:  | :----:  |
