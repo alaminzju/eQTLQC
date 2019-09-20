@@ -206,7 +206,7 @@ if(!appendInfo){
   print("with no append information, the pipeline is ended")
   outliersIndex <- which(colnames(TPM_data %in% outliersList))
   TPM_data <- TPM_data[,-outliersIndex]
-  write.table(format(TPM_data, digits=4,nsmall=4), file = "expression.postSVA.xls", sep="\t", col.names = NA, quote=F,row.names = TRUE)
+  write.table(format(TPM_data, digits=4,nsmall=4), file = "expression.postQC.xls", sep="\t", col.names = NA, quote=F,row.names = TRUE)
   
 }
 
@@ -303,7 +303,7 @@ if(is.element("mrna_id",colnames(clinical)) || is.element("batch",colnames(clini
   }
   message("# save final quantification data into file")
   ######################
-  write.table(format(residuals, digits=4,nsmall=4), file = "expression.postSVA.xls", sep="\t", col.names = NA, quote=F,row.names = TRUE)
+  write.table(format(residuals, digits=4,nsmall=4), file = "expression.postQC.xls", sep="\t", col.names = NA, quote=F,row.names = TRUE)
   rownames(clinical) = clinical$mrna_id
   clinical_RNAseqSamples = clinical[colnames(residuals),]
   write.table(clinical_RNAseqSamples, file = "clinical_RNAseqQCedSamples.txt", sep="\t", col.names=TRUE, quote=F, row.names=FALSE)
