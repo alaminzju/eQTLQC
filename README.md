@@ -1,5 +1,5 @@
 
-# Readme
+# readme
 A Tool.config file is necessary to run this tool!
 
 This tool is mostly wrote in R3.5 and Python3.7, please make sure it can run on your enviroment.
@@ -96,13 +96,24 @@ When "usage":"TRUE", the genotyping part is functional. The tools is use plink t
 |t|default(10)number of principal components along which to remove outliers during each outlier removal iteration|
 
 #### Imputation
-If the usage of Imputation is TRUE, the tool will use <a href="https://www.well.ox.ac.uk/~wrayner/tools/" target="_blank">**McCarthy's tool**</a>McCarthy's tool to do prepreparing checking. The tool can use three kinds of reference panel: HRC, 1000G and CAAPA, use the parameter in config file to select and determind the reference panel.
+If the usage of Imputation is TRUE, the tool will use <a href="https://www.well.ox.ac.uk/~wrayner/tools/" target="_blank">**McCarthy's tool**</a> to do prepreparing checking. The tool can use three kinds of reference panel: HRC, 1000G and CAAPA, use the parameter in config file to select and determind the reference panel.
 
 ## Run Demo data
 To show how this QCTool works, we use the E-GEUV-1's data as a demo and run the QC pipeline on it. In /Sample/fastq/ there is an *run_demo.sh*, which can automatically download three sample's RNA-seq data in fastq format in to /fastq/ and download reference to /ref/, than create reference files and use RSEM to calculate the expression data for each sample. The tool will create a */TranscriptomeWorkplace" directory and place the result including mapped bam file, which can also be used to create a TPM matrix, and each sample's expression data. After calculate expression for each sample, the results will be distilled and generate a TPM_matrix.csv file under /Sample/fastq/ and read for downstream analysis.
 
 However, three samples are too less to run the downstream pipeline. To show the whole function of the tool, we use summary of alignment (read count) as another demo which is placed in /Sample/readcount/, by running *run_demo.sh*, a read count file will be download and calculate expression levels in tpm with a gene length file. it will also create a TPM_matrix.csv file and can be used for downstream analysis. The result will be stored in *expression.postQC.xls* and generate a *Report.html* to show the details of preprocessing under the working directory.
 
+As for genotype data, we also create a demo in /Sample/VCF/, by running *run_demo.sh* it will download a <a href="https://www.ebi.ac.uk/arrayexpress/files/E-GEUV-1/GEUVADIS.chr1.PH1PH2_465.IMPFRQFILT_BIALLELIC_PH.annotv2.genotypes.vcf.gz" target="_blank">genotype data</a> in VCF format and preprocess it with QC tool. It will generate PLINK format data for each step of preprocessing and create a table in markdown named *GeneReport.md* containing details of each step. Here is an example:
+|step|SNPs removed|SNP pass|sample removed|sample pass|
+| --------   | :-----:  | :----:    | :-----:| :---: |
+|genotyping rate|84133|409726|0|465|
+|call rate|0|409726|0|465|
+|sex check|0|409726|0|465|
+|HWE test|5000|404726|0|465|
+|Mishap|0|404726|0|465|
+|MAF|239983|164743|0|465|
+|F-outlier and IBD|0|164743|140|325|
+|PCA outliers|0|164743|0|325|
 
 
 
