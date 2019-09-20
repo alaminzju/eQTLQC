@@ -55,7 +55,7 @@ The RLE (Relative Log Expression) analysis is based on the hypothesis that in a 
 
 ##### Hierarchical clustering
 
-We use(1 - spearman's correlation) as distances between samples and assume samples should be homogeneous, so all samples should have short distances between others and clustered homogeneously. So samples far away others may be outliers. So we first use distances which is 1-spearmen correlation to hierarchically clustered, than use top 100 gene sort by variance to calculate Mahalanobis Distance, then a chi2 p-value will be calculated based on mahalanobis distance. Then clusters with $\geq 60\%$ samples with Bonferroni-corrected p-values < 0.05 were marked as outliers.
+We use(1 - spearman's correlation) as distances between samples and assume samples should be homogeneous, so all samples should have short distances between others and clustered homogeneously. So samples far away others may be outliers. So we first use distances which is 1-spearmen correlation to hierarchically clustered, than use top 100 gene sort by variance to calculate Mahalanobis Distance, then a chi2 p-value will be calculated based on mahalanobis distance. Then clusters with $\geq$ 60\% samples with Bonferroni-corrected p-values < 0.05 were marked as outliers.
 
 ##### D-statistic
 
@@ -96,5 +96,5 @@ When "usage":"TRUE", the genotyping part is functional. The tools is use plink t
 |t|default(10)number of principal components along which to remove outliers during each outlier removal iteration|
 
 #### Imputation
-If the usage of Imputation is TRUE, the tool will use <a href="https://www.well.ox.ac.uk/~wrayner/tools/" target="_blank">**McCarthy's tool**</a>McCarthy's tool to do prepreparing checking. The tool can use three kinds of reference panel: HRC, 1000G and CAAPA, use the parameter in config file to seletc and determind the reference panel.
+If the usage of Imputation is TRUE, the tool will use <a href="https://www.well.ox.ac.uk/~wrayner/tools/" target="_blank">**McCarthy's tool**</a>McCarthy's tool to do prepreparing checking. The tool can use three kinds of reference panel: HRC, 1000G and CAAPA, use the parameter in config file to select and determind the reference panel.
 
