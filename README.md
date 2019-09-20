@@ -55,7 +55,7 @@ The RLE (Relative Log Expression) analysis is based on the hypothesis that in a 
 
 ##### Hierarchical clustering
 
-We use(1 - spearman's correlation) as distances between samples and assume samples should be homogeneous, so all samples should have short distances between others and clustered homogeneously. So samples far away others may be outliers. So we first use distances which is 1-spearmen correlation to hierarchically clustered, than use top 100 gene sort by variance to calculate Mahalanobis Distance, then a chi2 p-value will be calculated based on mahalanobis distance. Then clusters with $\geq$ 60\% samples with Bonferroni-corrected p-values < 0.05 were marked as outliers.
+We use(1 - spearman's correlation) as distances between samples and assume samples should be homogeneous, so all samples should have short distances between others and clustered homogeneously. So samples far away others may be outliers. So we first use distances which is 1-spearmen correlation to hierarchically clustered, than use top 100 gene sort by variance to calculate Mahalanobis Distance, then a chi2 p-value will be calculated based on mahalanobis distance. Then clusters with ≥ 60\% samples with Bonferroni-corrected p-values < 0.05 were marked as outliers.
 
 ##### D-statistic
 
