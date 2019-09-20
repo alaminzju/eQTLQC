@@ -1,5 +1,5 @@
 
-# readme
+# Readme
 A Tool.config file is necessary to run this tool!
 
 This tool is mostly wrote in R3.5 and Python3.7, please make sure it can run on your enviroment.
