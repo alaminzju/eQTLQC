@@ -1,5 +1,5 @@
 
-# Readme
+# readme
 A Tool.config file is necessary to run this tool!
 
 This tool is mostly wrote in R3.5 and Python3.7, please make sure it can run on your enviroment.
@@ -36,7 +36,7 @@ After determind fastq or bam, the tool will count TPM(Transcripts per million re
 |estimate-rspd|optional|Set this option if you want to estimate the read start position distribution (RSPD) from data. Otherwise, RSEM will use a uniform RSPD|
 |append_names|optional|tells RSEM to append gene_name/transcript_name to the result files|
 
-After RSEM, each individuals will have a .result file as result, which contain a colume "TPM", then the tool will read all the .result file and create a "TPM_matrix.csv" for later analysis.
+After RSEM, each individuals will have a .result file as result, which contain a colume "TPM", then the tool will read all the .result files and create a "TPM_matrix.csv" for later analysis.
 
 If input is readcount and gene length file, the tool will call readcounts2TPM.R and create a "TPM_matrix.csv".
 
@@ -97,4 +97,12 @@ When "usage":"TRUE", the genotyping part is functional. The tools is use plink t
 
 #### Imputation
 If the usage of Imputation is TRUE, the tool will use <a href="https://www.well.ox.ac.uk/~wrayner/tools/" target="_blank">**McCarthy's tool**</a>McCarthy's tool to do prepreparing checking. The tool can use three kinds of reference panel: HRC, 1000G and CAAPA, use the parameter in config file to select and determind the reference panel.
+
+## Run Demo data
+To show how this QCTool works, we use the E-GEUV-1's data as a demo and run the QC pipeline on it. In /Sample/fastq/ there is an *run_demo.sh*, which can automatically download three sample's RNA-seq data in fastq format in to /fastq/ and download reference to /ref/, than create reference files and use RSEM to calculate the expression data for each sample. The tool will create a */TranscriptomeWorkplace" directory and place the result including mapped bam file, which can also be used to create a TPM matrix, and each sample's expression data. After calculate expression for each sample, the results will be distilled and generate a TPM_matrix.csv file under /Sample/fastq/ and read for downstream analysis.
+
+However, three samples are too less to run the downstream pipeline. To show the whole function of the tool, we use summary of alignment (read count) as another demo which is placed in /Sample/readcount/, by running *run_demo.sh*, a read count file will be download and calculate expression levels in tpm with a gene length file. it will also create a TPM_matrix.csv file and can be used for downstream analysis. The result will be stored in *expression.postQC.xls* and generate a *Report.html* to show the details of preprocessing under the working directory.
+
+
+
 
