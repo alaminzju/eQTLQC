@@ -1,5 +1,5 @@
 
-# readme
+# Readme
 A Tool.config file is necessary to run this tool!
 
 This tool is mostly wrote in R3.5 and Python3.7, please make sure it can run on your enviroment.
@@ -104,6 +104,8 @@ To show how this QCTool works, we use the E-GEUV-1's data as a demo and run the 
 However, three samples are too less to run the downstream pipeline. To show the whole function of the tool, we use summary of alignment (read count) as another demo which is placed in /Sample/readcount/, by running *run_demo.sh*, a read count file will be download and calculate expression levels in tpm with a gene length file. it will also create a TPM_matrix.csv file and can be used for downstream analysis. The result will be stored in *expression.postQC.xls* and generate a *Report.html* to show the details of preprocessing under the working directory.
 
 As for genotype data, we also create a demo in /Sample/VCF/, by running *run_demo.sh* it will download a <a href="https://www.ebi.ac.uk/arrayexpress/files/E-GEUV-1/GEUVADIS.chr1.PH1PH2_465.IMPFRQFILT_BIALLELIC_PH.annotv2.genotypes.vcf.gz" target="_blank">genotype data</a> in VCF format and preprocess it with QC tool. It will generate PLINK format data for each step of preprocessing and create a table in markdown named *GeneReport.md* containing details of each step. Here is an example:
+
+
 |step|SNPs removed|SNP pass|sample removed|sample pass|
 | --------   | :-----:  | :----:    | :-----:| :---: |
 |genotyping rate|84133|409726|0|465|
