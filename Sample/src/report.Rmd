@@ -9,17 +9,17 @@ knitr::opts_chunk$set(echo = TRUE)
 
 In this part, we will do quality control and some normalizatation work base on TPM data.
 
-##Three statistics to identify outliers
+## Three statistics to identify outliers
 
-###RLE
+### RLE
 
 RLE(Relative Log Expression)is assume that most expressions in a sample should be near a mean value, only a few genes have differential expression, which means higher or lower than other genes. To calculate it, for each gene *i* , calculate it median in *N* sample as *Medi* , for each sample *j* , and expression value *eij*, count the difference between *eij* and *Medi* : *deij = eij-Medi* , than boxplot each sample base on *deij* and sort by IQR(interquartile range), the sample with lager IQR is more likely to be an outlier. 
 
-###Hierarchical clustering
+### Hierarchical clustering
 
 We use(1 - spearman's correlation) as distances between samples and assume samples should be homogeneous, so all samples should have short distances between others and clustered homogeneously. So samples far away others may be outliers. So we first use distances which is 1-spearmen correlation to hierarchically clustered, than use top 100 gene sort by variance to calculate Mahalanobis Distance, then a chi2 p-value will be calculated based on mahalanobis distance. Then clusters with $ \geq 60\%$ samples with Bonferroni-corrected p-values < 0.05 were marked as outliers.
 
-###D-statistic
+### D-statistic
 
 For each sample, D-statistic represent the average correlation between its expression and other samples. A sample with lower D-statistic is more likely to be an outlier.
 
@@ -36,8 +36,8 @@ if (!require("RColorBrewer")){
 }
 json_data<-fromJSON(file="Tool.config")
 
-appendInfo <- toupper(json_data$config$transcriptome$transcriptomeQC$coveriance)=="TRUE"
-appendInfoFile <- json_data$config$transcriptome$transcriptomeQC$coveriance_file
+appendInfo <- toupper(json_data$config$transcriptome$transcriptomeQC$covariants)=="TRUE"
+appendInfoFile <- json_data$config$transcriptome$transcriptomeQC$covariants_file
 csvfile <- "TPM_matrix.csv"
 RLEFilterPercent <-json_data$config$transcriptome$transcriptomeQC$RLEFilterPercent
 DSFilterPercent <- json_data$config$transcriptome$transcriptomeQC$DSFilterPercent
@@ -50,7 +50,7 @@ library(reshape2)
 library(tidyverse)
 TPM_data <- read.csv(csvfile,header = TRUE,row.names = 1)
 keep_genes_idx <- (rowMeans(TPM_data>0.1)>0.2) 
-TPM_data = TPM_data[keep_genes_idx,] #38471 * 367
+TPM_data = TPM_data[keep_genes_idx,]
 
 if(appendInfo)
 {
@@ -136,13 +136,13 @@ D_filterList = D%>%filter(D <= DSFilter)
 D_filterList <- D_filterList$Sample
 ```
 
-###outliers voted by RLE
+### Outliers voted by RLE
 ```{r , echo=FALSE, warning=FALSE, message=FALSE}
 RLEFilterList<-as.character(RLEFilterList)
 RLEFilterList
 ```
 
-###outliers voted by Hcluster
+### Outliers voted by Hcluster
 ```{r , echo=FALSE, warning=FALSE, message=FALSE}
 HCoutliers
 co1 = hc$labels%in%HCoutliers
@@ -157,13 +157,13 @@ legend('bottomleft',pch=21,Xtext, col='white',pt.bg=Xcol, cex=1)
 
 
 
-###outliers voted by D-statistic
+### Outliers voted by D-statistic
 ```{r , echo=FALSE, warning=FALSE, message=FALSE}
 D_filterList<-as.character(D_filterList)
 D_filterList
 ```
 
-###their union is picked as outliers
+### Their union is picked as outliers
 ```{r , echo=FALSE, warning=FALSE, message=FALSE}
 outliersList <- intersect(RLEFilterList,intersect(HCoutliers,D_filterList))
 outliersList
@@ -204,9 +204,23 @@ if(appendInfo && is.element("sex",colnames(clinical))){
 ```{r if no appendInfo, echo=FALSE, warning=FALSE, results='hide', message=FALSE}
 if(!appendInfo){
   print("with no append information, the pipeline is ended")
-  outliersIndex <- which(colnames(TPM_data %in% outliersList))
-  TPM_data <- TPM_data[,-outliersIndex]
-  write.table(format(TPM_data, digits=4,nsmall=4), file = "expression.postQC.xls", sep="\t", col.names = NA, quote=F,row.names = TRUE)
+  outliersIndex <- which(colnames(TPM_data) %in% outliersList)
+  if(!length(outliersIndex) == 0){
+    TPM_data <- TPM_data[,-outliersIndex]
+  }
+  keep_genes_idx <- (rowSums(TPM_data>0.1)>=10) 
+  expr= TPM_data[keep_genes_idx,]
+  expr=log10(expr+1e-4)  # so row value of 0 will be -4 in the transformed value
+  # outlier correction: quantile normalization with order preserved. Now TPM is changed to rank normalized gene expression.
+  m=apply(expr, 1, mean); 
+  sd=apply(expr, 1, sd)
+  expr = t(apply(expr, 1, rank, ties.method = "average"));
+  #expr = qnorm(expr / (ncol(expr)+1));  # to standard normalization
+  expr = qnorm(expr / (ncol(expr)+1), mean=m, sd=sd)  # or, to preserve the mean and sd of each gene
+  rm(m,sd)
+  expr = as.data.frame(expr)
+  
+  write.table(format(expr, digits=4,nsmall=4), file = "expression.postQC.xls", sep="\t", col.names = NA, quote=F,row.names = TRUE)
   
 }
 
